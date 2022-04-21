@@ -15,6 +15,7 @@ namespace Todo.Models.TodoItems
 
         public bool IsDone { get; set; }
 
+        [Display(Name = "Responsible")]
         public string ResponsiblePartyId { get; set; }
 
         public Importance Importance { get; set; }
