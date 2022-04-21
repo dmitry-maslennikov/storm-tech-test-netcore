@@ -1,10 +1,13 @@
 ﻿@using Todo.Controllers
 @using Todo.Data.Entities
 @using Todo.Services
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
 @{
     ViewData["Title"] = $"List: {Model.Title}";
+    var loggedInGravatarHash = Gravatar.GetHash(UserManager.GetUserName(User));
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -68,9 +71,9 @@
 
                     <div class="col-md-4 text-right">
                         <small>
-                            @item.ResponsibleParty.UserName
+                            @item.ResponsibleParty.UserName <span class="gravatar-name" data-gravatar-hash="@item.ResponsibleParty.GravatarHash" style="display:none"></span>
 
-                            <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30" />
+                            <img src="https://www.gravatar.com/avatar/@(item.ResponsibleParty.GravatarHash)?s=30" alt="avatar" />
 
                         </small>
                     </div>
@@ -87,5 +90,12 @@
                 <input type="checkbox" onclick="javascript: $('.list-group li.done').toggleClass('hide')"> Hide items that are marked as done
             </label>
         </div>
+    }
+
+    @section Scripts {
+        @foreach (var h in Model.GetDistinctGravatarHashes(new string[] { loggedInGravatarHash }))
+        {
+            <script type="text/javascript" src="https://www.gravatar.com/@(h).json?callback=GravatarApiWrapper.InjectGravatarProfileData"></script>
+        }
     }
 </div>

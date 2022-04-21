@@ -30,5 +30,13 @@ namespace Todo.Models.TodoLists
         {
             return Items.Any(i => i.IsDone);
         }
+
+        public IEnumerable<string> GetDistinctGravatarHashes(string[] excludeList = null)
+        {
+            var query = Items.Select(i => i.ResponsibleParty.GravatarHash).Distinct();
+            if (excludeList != null)
+                query = query.Except(excludeList);
+            return query.ToList();
+        }
     }
 }

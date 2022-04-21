@@ -18,15 +18,15 @@
                         var gravatarhash = Gravatar.GetHash(emailAddress);
                     }
 
-                    <img src="https://www.gravatar.com/avatar/@gravatarhash?s=30" />
-                    @UserManager.GetUserName(User)
+                    <img src="https://www.gravatar.com/avatar/@(Gravatar.GetHash(UserManager.GetUserName(User)))?s=30" alt="avatar" />
+                    @UserManager.GetUserName(User) <span class="gravatar-name" data-gravatar-hash="@Gravatar.GetHash(UserManager.GetUserName(User))" style="display:none"></span>
                 </a>
             </li>
             <li>
                 <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
             </li>
         </ul>
-    </form>
+    </form>    
 }
 else
 {
