@@ -20,6 +20,11 @@ namespace Todo.Models.TodoLists
         public IEnumerable<TodoItemSummaryViewmodel> GetItemsSorted()
         {
             return Items.OrderBy(i => (int)i.Importance).ToList();
-        }    
+        }
+
+        public bool HasDoneItems()
+        {
+            return Items.Any(i => i.IsDone);
+        }
     }
 }

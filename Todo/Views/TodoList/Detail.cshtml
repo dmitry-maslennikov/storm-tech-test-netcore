@@ -35,7 +35,7 @@
                     break;
             }
 
-            <li class="list-group-item @contextualClass">
+            <li class="list-group-item @contextualClass @(item.IsDone ? "done" : String.Empty)">
 
                 <div class="row">
 
@@ -57,7 +57,7 @@
                         <small>
                             @item.ResponsibleParty.UserName
 
-                            <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30"/>
+                            <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30" />
 
                         </small>
                     </div>
@@ -66,4 +66,13 @@
             </li>
         }
     </ul>
+
+    @if (Model.HasDoneItems())
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" onclick="javascript: $('.list-group li.done').toggleClass('hide')"> Hide items that are marked as done
+            </label>
+        </div>
+    }
 </div>
