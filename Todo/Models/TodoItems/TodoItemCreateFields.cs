@@ -16,6 +16,10 @@ namespace Todo.Models.TodoItems
 
         public Importance Importance { get; set; } = Importance.Medium;
 
+        [Display(Name = "Rank (0-100)")]
+        [Range(0, 100)]
+        public int Rank { get; set; }
+
         public TodoItemCreateFields() { }
 
         public TodoItemCreateFields(int todoListId, string todoListTitle, string responsiblePartyId)

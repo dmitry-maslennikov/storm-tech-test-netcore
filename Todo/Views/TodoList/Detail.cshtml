@@ -10,6 +10,16 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
+    <p>
+        <a asp-action="Index" asp-controller="TodoList">
+            &lt;- Back to list
+        </a>
+    </p>
+    <p>
+        <a asp-action="Detail" asp-controller="TodoList" asp-route-orderByRank="@(!Model.OrderByRank)" asp-route-todoListId="@Model.TodoListId">
+            <strong>@(Model.OrderByRank ? "Order by importance" : "Order by rank")</strong>
+        </a>
+    </p>
 
     <ul class="list-group">
 
@@ -40,17 +50,20 @@
                 <div class="row">
 
                     <div class="col-md-8">
-                        <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
+                        <p>
+                            <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
 
-                            @if (item.IsDone)
-                            {
-                                <s>@item.Title</s>
-                            }
-                            else
-                            {
-                                <text>@item.Title</text>
-                            }
-                        </a>
+                                @if (item.IsDone)
+                                {
+                                    <s>@item.Title</s>
+                                }
+                                else
+                                {
+                                    <text>@item.Title</text>
+                                }
+                            </a>
+                        </p>
+                        <i>Rank:</i> <span>@item.Rank</span>
                     </div>
 
                     <div class="col-md-4 text-right">

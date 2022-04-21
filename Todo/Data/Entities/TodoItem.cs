@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Todo.Data.Entities {
     public class TodoItem
@@ -13,14 +14,18 @@ namespace Todo.Data.Entities {
         public int TodoListId { get; set; }
         public TodoList TodoList { get; set; }
 
+        [Range(0, 100)]
+        public int Rank { get; set; }
+
         protected TodoItem() { }
 
-        public TodoItem(int todoListId, string responsiblePartyId, string title, Importance importance)
+        public TodoItem(int todoListId, string responsiblePartyId, string title, Importance importance, int rank)
         {
             TodoListId = todoListId;
             ResponsiblePartyId = responsiblePartyId;
             Title = title;
             Importance = importance;
+            Rank = rank;
         }
     }
 }
