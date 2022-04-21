@@ -9,9 +9,17 @@ namespace Todo.Services
     {
         public static IQueryable<TodoList> RelevantTodoLists(this ApplicationDbContext dbContext, string userId)
         {
-            return dbContext.TodoLists.Include(tl => tl.Owner)
-                .Include(tl => tl.Items)
-                .Where(tl => tl.Owner.Id == userId);
+            var query1 = dbContext.TodoLists.Where(tl => tl.Owner.Id == userId);
+
+            var query2 = from l in dbContext.TodoLists
+                         join i in dbContext.TodoItems on l.TodoListId equals i.TodoListId
+                         where i.ResponsiblePartyId == userId && l.Owner.Id != userId
+                         select l;
+
+            return query1.Union(query2)
+                         .Include(tl => tl.Owner)
+                         .Include(tl => tl.Items);
+                
         }
 
         public static TodoList SingleTodoList(this ApplicationDbContext dbContext, int todoListId)
