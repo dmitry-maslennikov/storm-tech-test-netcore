@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Todo.Models.TodoItems;
 
 namespace Todo.Models.TodoLists
@@ -15,5 +16,10 @@ namespace Todo.Models.TodoLists
             TodoListId = todoListId;
             Title = title;
         }
+
+        public IEnumerable<TodoItemSummaryViewmodel> GetItemsSorted()
+        {
+            return Items.OrderBy(i => (int)i.Importance).ToList();
+        }    
     }
 }
