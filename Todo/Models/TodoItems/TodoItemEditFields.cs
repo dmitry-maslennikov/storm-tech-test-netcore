@@ -1,15 +1,22 @@
-﻿using Todo.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using Todo.Data.Entities;
 
 namespace Todo.Models.TodoItems
 {
     public class TodoItemEditFields
     {
         public int TodoListId { get; set; }
+
         public string Title { get; set; }
+
         public string TodoListTitle { get; set; }
+
         public int TodoItemId { get; set; }
+
         public bool IsDone { get; set; }
+
         public string ResponsiblePartyId { get; set; }
+
         public Importance Importance { get; set; }
 
         public TodoItemEditFields() { }
@@ -22,7 +29,7 @@ namespace Todo.Models.TodoItems
             Title = title;
             IsDone = isDone;
             ResponsiblePartyId = responsiblePartyId;
-            Importance = Importance.Medium;
+            Importance = importance;
         }
     }
 }
