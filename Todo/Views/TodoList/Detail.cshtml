@@ -1,13 +1,9 @@
-﻿@using Todo.Controllers
-@using Todo.Data.Entities
-@using Todo.Services
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<IdentityUser> UserManager
+﻿@using System.Text.Encodings.Web
+ 
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
 @{
     ViewData["Title"] = $"List: {Model.Title}";
-    var loggedInGravatarHash = Gravatar.GetHash(UserManager.GetUserName(User));
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -24,78 +20,51 @@
         </a>
     </p>
 
-    <ul class="list-group">
-
-        <li class="list-group-item">
-            <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
-                <strong>Add New Item</strong>
-            </a>
-        </li>
-
-        @foreach (var item in Model.GetItemsSorted())
-        {
-            string contextualClass;
-            switch (item.Importance)
-            {
-                case Importance.High:
-                    contextualClass = "list-group-item-danger";
-                    break;
-                case Importance.Low:
-                    contextualClass = "list-group-item-info";
-                    break;
-                default:
-                    contextualClass = "";
-                    break;
-            }
-
-            <li class="list-group-item @contextualClass @(item.IsDone ? "done" : String.Empty)">
-
-                <div class="row">
-
-                    <div class="col-md-8">
-                        <p>
-                            <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
-
-                                @if (item.IsDone)
-                                {
-                                    <s>@item.Title</s>
-                                }
-                                else
-                                {
-                                    <text>@item.Title</text>
-                                }
-                            </a>
-                        </p>
-                        <i>Rank:</i> <span>@item.Rank</span>
-                    </div>
-
-                    <div class="col-md-4 text-right">
-                        <small>
-                            @item.ResponsibleParty.UserName <span class="gravatar-name" data-gravatar-hash="@item.ResponsibleParty.GravatarHash" style="display:none"></span>
-
-                            <img src="https://www.gravatar.com/avatar/@(item.ResponsibleParty.GravatarHash)?s=30" alt="avatar" />
-
-                        </small>
-                    </div>
-                </div>
-
-            </li>
-        }
-    </ul>
+    <div id="details-container">
+        <partial name="_DetailsToDo" model="@Model" />
+    </div>
 
     @if (Model.HasDoneItems())
     {
         <div class="checkbox">
             <label>
-                <input type="checkbox" onclick="javascript: $('.list-group li.done').toggleClass('hide')"> Hide items that are marked as done
+                <input id="hide-done-items" type="checkbox" onclick="javascript: $('.list-group li.done').toggleClass('hide')"> Hide items that are marked as done
             </label>
         </div>
     }
 
+    <form id="create-form" style="display: none">
+        <partial name="_CreateTodoItemForm" model="@Model.CreateFields" />
+    </form>
+
+    <div id="spinner" class="spinner"></div>
+
     @section Scripts {
-        @foreach (var h in Model.GetDistinctGravatarHashes(new string[] { loggedInGravatarHash }))
-        {
-            <script type="text/javascript" src="https://www.gravatar.com/@(h).json?callback=GravatarApiWrapper.InjectGravatarProfileData"></script>
-        }
+        <script type="text/javascript">
+            $(function () {
+                var settings = {
+                    endpointUrls: {
+                        createApi: '@Url.Action("ApiCreate", "TodoItem")'
+                    },
+                    resources: {
+                        genericErrorMessage: 'Unexpected error has occurred, please try again later.'
+                    },
+                    ids: {
+                        form: {
+                            title: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.Title)))',
+                            importance: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.Importance)))',
+                            responsible: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.ResponsiblePartyId)))',
+                            rank: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.Rank)))',
+                            todoListId: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.TodoListId)))'
+                        }
+                    }
+                };
+
+                var orderByRank = Boolean(@(Model.OrderByRank ? 1 : 0))
+                var todoListId = Number(@Model.CreateFields.TodoListId)
+
+                TodoDetailsPage.Init(settings, orderByRank, todoListId);
+            })
+        </script>
     }
 </div>

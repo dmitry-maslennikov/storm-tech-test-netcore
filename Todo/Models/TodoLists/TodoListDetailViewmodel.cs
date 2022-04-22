@@ -10,13 +10,17 @@ namespace Todo.Models.TodoLists
         public string Title { get; }
         public ICollection<TodoItemSummaryViewmodel> Items { get; }
         public bool OrderByRank { get; set; }
+        public TodoItemCreateFields CreateFields { get; set; }
+        public bool HideDoneItems { get; set; }
 
-        public TodoListDetailViewmodel(int todoListId, string title, ICollection<TodoItemSummaryViewmodel> items, bool orderByRank)
+        public TodoListDetailViewmodel(int todoListId, string title, ICollection<TodoItemSummaryViewmodel> items, bool orderByRank, TodoItemCreateFields createFields, bool hideDoneItems)
         {
             Items = items;
             TodoListId = todoListId;
             Title = title;
             OrderByRank = orderByRank;
+            CreateFields = createFields;
+            HideDoneItems = hideDoneItems;
         }
 
         public IEnumerable<TodoItemSummaryViewmodel> GetItemsSorted()

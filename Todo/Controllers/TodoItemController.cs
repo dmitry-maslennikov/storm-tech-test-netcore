@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Todo.Data;
 using Todo.Data.Entities;
 using Todo.EntityModelMappers.TodoItems;
+using Todo.EntityModelMappers.TodoLists;
+using Todo.Helpers;
 using Todo.Models.TodoItems;
+using Todo.Models.TodoLists;
 using Todo.Services;
 
 namespace Todo.Controllers
@@ -33,10 +36,7 @@ namespace Todo.Controllers
         {
             if (!ModelState.IsValid) { return View(fields); }
 
-            var item = new TodoItem(fields.TodoListId, fields.ResponsiblePartyId, fields.Title, fields.Importance, fields.Rank);
-
-            await dbContext.AddAsync(item);
-            await dbContext.SaveChangesAsync();
+            await CreateToDoItem(fields);
 
             return RedirectToListDetail(fields.TodoListId);
         }
@@ -65,9 +65,36 @@ namespace Todo.Controllers
             return RedirectToListDetail(todoItem.TodoListId);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ApiCreate(TodoItemCreateFields fields, bool orderByRank, bool hideDoneItems)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            // In a real-world scenario, we should check if the logged-in user is eligible to create to-do items in the to-do list (the user might not have access to the list), but we'll omit that check in the test task for brevity.
+            // For now, just create the item.
+            await CreateToDoItem(fields);
+
+            // Then render the partial view and return as string
+            var todoList = dbContext.SingleTodoList(fields.TodoListId);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderByRank, User.Id(), hideDoneItems);
+
+            var viewAsString = await RazorHelper.RenderViewAsync<TodoListDetailViewmodel>(this, "_DetailsToDo", viewmodel, true);
+
+            return Ok(viewAsString);
+        }
+
         private RedirectToActionResult RedirectToListDetail(int fieldsTodoListId)
         {
             return RedirectToAction("Detail", "TodoList", new {todoListId = fieldsTodoListId});
+        }
+
+        private async Task CreateToDoItem(TodoItemCreateFields fields)
+        {
+            var item = new TodoItem(fields.TodoListId, fields.ResponsiblePartyId, fields.Title, fields.Importance, fields.Rank);
+
+            await dbContext.AddAsync(item);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

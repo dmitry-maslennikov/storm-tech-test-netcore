@@ -1,0 +1,75 @@
+﻿@using Todo.Services
+@using Todo.Data.Entities
+@using Microsoft.AspNetCore.Identity
+@model Todo.Models.TodoLists.TodoListDetailViewmodel
+@inject UserManager<IdentityUser> UserManager
+
+@{
+
+    var loggedInGravatarHash = Gravatar.GetHash(UserManager.GetUserName(User));
+}
+
+<ul class="list-group">
+
+    <li class="list-group-item">
+        @*<a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">*@
+        <a href="javascript:void(0)" id="add-new-item">
+            <strong>Add New Item</strong>
+        </a>
+    </li>
+
+    @foreach (var item in Model.GetItemsSorted())
+    {
+        string contextualClass;
+        switch (item.Importance)
+        {
+            case Importance.High:
+                contextualClass = "list-group-item-danger";
+                break;
+            case Importance.Low:
+                contextualClass = "list-group-item-info";
+                break;
+            default:
+                contextualClass = "";
+                break;
+        }
+
+        <li class="list-group-item @contextualClass @(item.IsDone ? "done" : String.Empty) @(item.IsDone && Model.HideDoneItems ? "hide" : String.Empty)">
+
+            <div class="row">
+
+                <div class="col-md-8">
+                    <p>
+                        <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
+
+                            @if (item.IsDone)
+                            {
+                                <s>@item.Title</s>
+                            }
+                            else
+                            {
+                                <text>@item.Title</text>
+                            }
+                        </a>
+                    </p>
+                    <i>Rank:</i> <span>@item.Rank</span>
+                </div>
+
+                <div class="col-md-4 text-right">
+                    <small>
+                        @item.ResponsibleParty.UserName <span class="gravatar-name hide" data-gravatar-hash="@item.ResponsibleParty.GravatarHash"></span>
+
+                        <img src="https://www.gravatar.com/avatar/@(item.ResponsibleParty.GravatarHash)?s=30" alt="avatar" />
+
+                    </small>
+                </div>
+            </div>
+
+        </li>
+    }
+</ul>
+
+@foreach (var h in Model.GetDistinctGravatarHashes(new string[] { loggedInGravatarHash }))
+{
+    <script type="text/javascript" src="https://www.gravatar.com/@(h).json?callback=GravatarApiWrapper.InjectGravatarProfileData"></script>
+}

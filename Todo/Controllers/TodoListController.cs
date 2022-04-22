@@ -34,7 +34,7 @@ namespace Todo.Controllers
         public IActionResult Detail(int todoListId, bool orderByRank = false)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderByRank);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderByRank, User.Id());
             return View(viewmodel);
         }
 
