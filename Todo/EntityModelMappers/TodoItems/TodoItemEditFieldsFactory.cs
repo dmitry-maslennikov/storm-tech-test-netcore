@@ -19,6 +19,11 @@ namespace Todo.EntityModelMappers.TodoItems
             dest.ResponsiblePartyId = src.ResponsiblePartyId;
             dest.Importance = src.Importance;
             dest.Rank = src.Rank;
+        }        
+        
+        public static void Update(int newRank, TodoItem dest)
+        {
+            dest.Rank = newRank;
         }
     }
 }

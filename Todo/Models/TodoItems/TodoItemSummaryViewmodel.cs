@@ -20,5 +20,23 @@ namespace Todo.Models.TodoItems
             Importance = importance;
             Rank = rank;
         }
+
+        public string GetImportanceClass()
+        {
+            string result;
+            switch (Importance)
+            {
+                case Importance.High:
+                    result = "list-group-item-danger";
+                    break;
+                case Importance.Low:
+                    result = "list-group-item-info";
+                    break;
+                default:
+                    result = "";
+                    break;
+            }
+            return result;
+        }
     }
 }

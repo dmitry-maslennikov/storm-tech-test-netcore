@@ -2,12 +2,13 @@
 @using Todo.Data.Entities
 @using Microsoft.AspNetCore.Identity
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
-@inject UserManager<IdentityUser> UserManager
 
-@{
-
-    var loggedInGravatarHash = Gravatar.GetHash(UserManager.GetUserName(User));
-}
+<p>
+    @*<a asp-action="Detail" asp-controller="TodoList" asp-route-orderByRank="@(!Model.OrderByRank)" asp-route-todoListId="@Model.TodoListId">*@
+    <a href="javascript:void(0)" id="link-order-by" data-todo-orderbyrank="@(!Model.OrderByRank)">
+        <strong>@(Model.OrderByRank ? "Order by importance" : "Order by rank")</strong>
+    </a>
+</p>
 
 <ul class="list-group">
 
@@ -20,21 +21,8 @@
 
     @foreach (var item in Model.GetItemsSorted())
     {
-        string contextualClass;
-        switch (item.Importance)
-        {
-            case Importance.High:
-                contextualClass = "list-group-item-danger";
-                break;
-            case Importance.Low:
-                contextualClass = "list-group-item-info";
-                break;
-            default:
-                contextualClass = "";
-                break;
-        }
 
-        <li class="list-group-item @contextualClass @(item.IsDone ? "done" : String.Empty) @(item.IsDone && Model.HideDoneItems ? "hide" : String.Empty)">
+        <li class="list-group-item todo-item @item.GetImportanceClass() @(item.IsDone ? "done" : String.Empty) @(item.IsDone && Model.HideDoneItems ? "hide" : String.Empty)" data-todo-id="@item.TodoItemId" data-todo-rank="@item.Rank">
 
             <div class="row">
 
@@ -52,7 +40,7 @@
                             }
                         </a>
                     </p>
-                    <i>Rank:</i> <span>@item.Rank</span>
+                    <i>Rank:</i> <span>@item.Rank</span> <small><a href="javascript:void(0)" class="change-rank">change rank</a></small>
                 </div>
 
                 <div class="col-md-4 text-right">
@@ -69,7 +57,7 @@
     }
 </ul>
 
-@foreach (var h in Model.GetDistinctGravatarHashes(new string[] { loggedInGravatarHash }))
+@foreach (var h in Model.GetDistinctGravatarHashes())
 {
     <script type="text/javascript" src="https://www.gravatar.com/@(h).json?callback=GravatarApiWrapper.InjectGravatarProfileData"></script>
 }

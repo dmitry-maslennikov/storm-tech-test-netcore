@@ -1,5 +1,5 @@
 ﻿@using System.Text.Encodings.Web
- 
+@using Todo.Models.TodoItems  
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
 @{
@@ -12,11 +12,6 @@
     <p>
         <a asp-action="Index" asp-controller="TodoList">
             &lt;- Back to list
-        </a>
-    </p>
-    <p>
-        <a asp-action="Detail" asp-controller="TodoList" asp-route-orderByRank="@(!Model.OrderByRank)" asp-route-todoListId="@Model.TodoListId">
-            <strong>@(Model.OrderByRank ? "Order by importance" : "Order by rank")</strong>
         </a>
     </p>
 
@@ -44,7 +39,9 @@
             $(function () {
                 var settings = {
                     endpointUrls: {
-                        createApi: '@Url.Action("ApiCreate", "TodoItem")'
+                        createApi: '@Url.Action("ApiCreate", "TodoItem")',
+                        updateRankApi: '@Url.Action("ApiUpdateRank", "TodoItem")',
+                        reorderApi: '@Url.Action("ApiReorder", "TodoItem")'
                     },
                     resources: {
                         genericErrorMessage: 'Unexpected error has occurred, please try again later.'
@@ -55,7 +52,8 @@
                             importance: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.Importance)))',
                             responsible: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.ResponsiblePartyId)))',
                             rank: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.Rank)))',
-                            todoListId: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.TodoListId)))'
+                            todoListId: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(Model.CreateFields.TodoListId)))',
+                            todoItemId: '@Html.Raw(JavaScriptEncoder.Default.Encode(nameof(TodoItemEditFields.TodoItemId)))'
                         }
                     }
                 };
